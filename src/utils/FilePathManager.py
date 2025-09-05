@@ -4,7 +4,9 @@ import sys
 import logging
 from pathlib import Path
 from typing import Optional
+from .singleton import Singleton
 
+@Singleton
 class FilePathManager:
     """Classe para gerenciar referências a arquivos com compatibilidade PyInstaller"""
     
@@ -177,8 +179,3 @@ class FilePathManager:
         
         self.logger.warning(f"Arquivo '{filename}' não encontrado em nenhum diretório de busca")
         return None
-
-# Função factory para facilitar o uso
-def get_file_manager() -> FilePathManager:
-    """Retorna uma instância do FilePathManager"""
-    return FilePathManager()
