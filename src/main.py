@@ -1,6 +1,6 @@
 from app import App
-from utils import LockApp, GitHubUploader
-from core import AppLogger, AppConfig
+from utils import LockApp, GitHubUploader, FilePathManager
+from core import AppLogger, AppConfig, ServiceManager
 from gui.components import show_custom_message
 
 def main():
@@ -14,7 +14,9 @@ def main():
     print("=================Inicializando=================")
     AppLogger()
     AppConfig()
+    FilePathManager()
     GitHubUploader()
+    ServiceManager("data/services.json")
     
     app = App()
     

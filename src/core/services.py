@@ -1,6 +1,6 @@
 import json
 from typing import Dict, Any, Optional, List
-from utils import FilePathManager, Singleton
+from utils import Singleton
 from .logging import AppLogger
 from dotenv import load_dotenv
 import os
@@ -11,6 +11,7 @@ load_dotenv()
 class ServiceManager:
     def __init__(self, json_file_path: Optional[str] = None) -> None:
         self.logger = AppLogger().get_logger(__name__)
+        from utils import FilePathManager
         self.file_manager = FilePathManager.instance
         
         if not self.file_manager:
