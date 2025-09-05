@@ -13,8 +13,8 @@ def main():
     
     print("=================Inicializando=================")
     AppLogger()
-    AppConfig()
     FilePathManager()
+    AppConfig()
     GitHubUploader()
     ServiceManager()
     

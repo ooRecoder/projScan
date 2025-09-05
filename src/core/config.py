@@ -12,14 +12,21 @@ load_dotenv()
 class AppConfig:
     def __init__(self, config_file: str = "config.json") -> None:
         from utils import FilePathManager
-        self.file_manager = FilePathManager()
+        instance_logger = AppLogger.instance
+        self.file_manager = FilePathManager.instance
+        
+        if not instance_logger or not self.file_manager:
+            raise RuntimeError("As instâncias File e Logging não foram inicializadas")
+        
+        self.logger = instance_logger.get_logger(__name__)
+        
         self.config_file = config_file
         self.config_data: Dict[str, Any] = {}
-        self.logger = AppLogger().get_logger(__name__)
         self._load_config()
     
     def _load_config(self) -> None:
         """Carrega as configurações do arquivo JSON"""
+        if not self.file_manager: return None
         config_path = self.file_manager.get_file_path("config.json")
         try:
             if os.path.exists(config_path):
