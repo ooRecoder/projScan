@@ -28,7 +28,7 @@ class ServiceManager:
                 with open(self.json_file_path, 'r', encoding='utf-8') as file:
                     data = json.load(file)
                     if isinstance(data, dict):
-                        self.logger.info(f"Serviços carregados: {len(data)} serviços encontrados")
+                        self.logger.debug(f"Serviços carregados: {len(data)} serviços encontrados")
                         return data
             
             # Se o arquivo não existe, cria um padrão
