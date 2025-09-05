@@ -20,6 +20,7 @@ def main():
     ConfigManager() # Carrega as configurações do usuário para os serviços
     ComputerManager() # Carrega os dados das máquinas scanneadas
     
+    
     app = App()
     
     input("Pressiona ENTER...")
