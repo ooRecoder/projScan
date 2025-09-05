@@ -1,6 +1,6 @@
 from app import App
 from utils import LockApp, GitHubUploader, FilePathManager
-from core import AppLogger, AppConfig, ServiceManager
+from core import AppLogger, AppConfig, ServiceManager, ComputerManager, ConfigManager
 from gui.components import show_custom_message
 
 def main():
@@ -12,12 +12,13 @@ def main():
         return
     
     print("=================Inicializando=================")
-    AppLogger()
-    FilePathManager()
-    AppConfig()
-    GitHubUploader()
-    ServiceManager()
-    
+    AppLogger() # Logging
+    FilePathManager() # Serve para resolver caminhos
+    AppConfig() # Carrega as configurações gerais da aplicação
+    GitHubUploader() # Serve para fazer upload dos scaneamentos
+    ServiceManager() # Carrega as configurações gerais dos serviços
+    ConfigManager() # Carrega as configurações do usuário para os serviços
+    ComputerManager() # Carrega os dados das máquinas scanneadas
     
     app = App()
     

@@ -3,10 +3,6 @@ import os
 from typing import Any, Dict
 from utils import Singleton
 from core.logging import AppLogger
-from dotenv import load_dotenv
-
-# Carrega variáveis do .env
-load_dotenv()
 
 @Singleton
 class AppConfig:
