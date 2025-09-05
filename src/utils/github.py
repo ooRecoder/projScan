@@ -31,7 +31,7 @@ class GitHubUploader:
         if not all([self.repo, self.owner, self.token]):
             raise ValueError("❌ Configuração do GitHub incompleta no .env")
         
-        self.logger.info("Variáveis configuradas")
+        self.logger.info("GitHub Inicializado.")
 
     def upload_json_file(self, data: Any, filename: str) -> bool:
         """

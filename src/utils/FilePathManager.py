@@ -14,8 +14,8 @@ class FilePathManager:
         self.logger = logging.getLogger(__name__)
         self.is_production = self._check_environment()
         self.base_path = self._get_base_path()
-        self.logger.info(f"FilePathManager inicializado - Ambiente: {'Produção' if self.is_production else 'Desenvolvimento'}")
         self.logger.info(f"Base path: {self.base_path}")
+        self.logger.info(f"FilePathManager Inicializado - Ambiente: {'Produção' if self.is_production else 'Desenvolvimento'}")
     
     def _check_environment(self) -> bool:
         """

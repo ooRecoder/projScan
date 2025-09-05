@@ -23,6 +23,8 @@ class AppConfig:
         self.config_file = config_file
         self.config_data: Dict[str, Any] = {}
         self._load_config()
+        
+        self.logger.info("AppConfig Inicializado")
     
     def _load_config(self) -> None:
         """Carrega as configurações do arquivo JSON"""

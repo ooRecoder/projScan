@@ -20,7 +20,7 @@ class ServiceManager:
         self.json_file_path = self.file_manager.get_file_path(json_file_path)
         self.logger.info(f"Inicializando ServiceManager com arquivo: {json_file_path}")
         self.services_data: Dict[str, Dict[str, Any]] = self._load_services()
-    
+        self.logger.info(f"ServiceManager Inicializado")
     def _load_services(self) -> Dict[str, Dict[str, Any]]:
         """Carrega os dados dos serviços do arquivo JSON"""
         try:
