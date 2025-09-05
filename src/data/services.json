@@ -1,0 +1,96 @@
+{
+  "CPU": {
+    "description": "Coleta informações sobre a CPU do sistema",
+    "options": {
+      "usage": {
+        "type": "boolean",
+        "default": false,
+        "description": "Incluir o uso da CPU em porcentagem"
+      },
+      "cores": {
+        "type": "boolean",
+        "default": true,
+        "description": "Incluir o número de núcleos da CPU"
+      },
+      "details": {
+        "type": "boolean",
+        "default": true,
+        "description": "Incluir detalhes do processador (nome/modelo)"
+      }
+    }
+  },
+  "DEVICE": {
+    "description": "Coleta informações detalhadas do sistema Windows, incluindo fabricante, modelo, tipo de equipamento e baterias.",
+    "options": {
+      "include_system": {
+        "type": "boolean",
+        "default": true,
+        "description": "Incluir informações do sistema, como fabricante, modelo, tipo de PC e usuário logado."
+      },
+      "include_battery": {
+        "type": "boolean",
+        "default": true,
+        "description": "Incluir informações sobre a(s) bateria(s) do dispositivo, se houver."
+      }
+    }
+  },
+  "BIOS": {
+    "description": "Serviço responsável por coletar informações da BIOS no Windows usando WMI."
+  },
+  "DISK": {
+    "description": "Coleta informações sobre os discos do sistema, incluindo modelo, uso, estatísticas de I/O e saúde.",
+    "options": {
+      "disk_model": {
+        "type": "boolean",
+        "default": true,
+        "description": "Incluir modelo e status do disco."
+      },
+      "details": {
+        "type": "boolean",
+        "default": true,
+        "description": "Incluir detalhes completos do disco (WMI)."
+      },
+      "io_stats": {
+        "type": "boolean",
+        "default": false,
+        "description": "Incluir estatísticas de I/O de cada disco."
+      },
+      "usage": {
+        "type": "boolean",
+        "default": true,
+        "description": "Incluir uso de disco (total, usado, livre e percentual)."
+      }
+    }
+  },
+  "OS": {
+    "description": "Coleta informações sobre o sistema operacional, incluindo nome, versão e release.",
+    "options": {
+      "system": {
+        "type": "boolean",
+        "default": true,
+        "description": "Incluir o nome do sistema operacional (ex: Windows, Linux, macOS)."
+      },
+      "version": {
+        "type": "boolean",
+        "default": true,
+        "description": "Incluir a versão do sistema operacional."
+      },
+      "release": {
+        "type": "boolean",
+        "default": true,
+        "description": "Incluir o release do sistema operacional."
+      }
+    }
+  },
+  "RAM": {
+    "description": "Coleta informações sobre a memória RAM do sistema.",
+    "options": {
+      "unit": {
+        "type": "string",
+        "default": "GB",
+        "options": ["MB", "GB", "TB"],
+        "description": "Unidade da memória (MB, GB ou TB)."
+      }
+    }
+  }
+}
