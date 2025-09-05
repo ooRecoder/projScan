@@ -9,7 +9,7 @@ load_dotenv()
 
 @Singleton
 class ServiceManager:
-    def __init__(self, json_file_path: Optional[str] = None) -> None:
+    def __init__(self, json_file_path: Optional[str] = "data/services.json") -> None:
         self.logger = AppLogger().get_logger(__name__)
         from utils import FilePathManager
         self.file_manager = FilePathManager.instance

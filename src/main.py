@@ -16,7 +16,7 @@ def main():
     AppConfig()
     FilePathManager()
     GitHubUploader()
-    ServiceManager("data/services.json")
+    ServiceManager()
     
     app = App()
     
