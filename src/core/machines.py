@@ -26,7 +26,29 @@ class ComputerManager:
         self.logger = instance_logger.get_logger(__name__)
         self.computers: Dict[str, Dict[str, Any]] = {}
         self.logger.info(f"ComputerManager inicializado - Arquivo: {self.file_path}")
+        
+        # Garante que o arquivo existe antes de carregar
+        self._ensure_file_exists()
         self.load()
+
+    def _ensure_file_exists(self):
+        """Garante que o arquivo de dados existe, criando-o se necessário"""
+        try:
+            # Cria o diretório se não existir
+            os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
+            
+            # Se o arquivo não existe, cria com dados vazios
+            if not os.path.exists(self.file_path):
+                with open(self.file_path, "w", encoding="utf-8") as f:
+                    json.dump({}, f, indent=4, ensure_ascii=False)
+                self.logger.info(f"Arquivo de dados criado: {self.file_path}")
+                
+        except PermissionError:
+            self.logger.error(f"Sem permissão para criar arquivo: {self.file_path}")
+            raise
+        except Exception as e:
+            self.logger.error(f"Erro ao criar arquivo de dados: {e}")
+            raise
 
     def load(self):
         """Carrega os dados do arquivo JSON, se existir."""
@@ -48,12 +70,23 @@ class ComputerManager:
         except json.JSONDecodeError:
             self.logger.error("Arquivo JSON corrompido, inicializando dados vazios")
             self.computers = {}
+            # Recria o arquivo se estiver corrompido
+            self._recreate_file()
         except PermissionError:
             self.logger.error(f"Sem permissão para ler o arquivo: {self.file_path}")
             self.computers = {}
         except Exception as e:
             self.logger.error(f"Erro inesperado ao carregar dados: {e}")
             self.computers = {}
+
+    def _recreate_file(self):
+        """Recria o arquivo com dados vazios (útil para arquivos corrompidos)"""
+        try:
+            with open(self.file_path, "w", encoding="utf-8") as f:
+                json.dump({}, f, indent=4, ensure_ascii=False)
+            self.logger.info(f"Arquivo recriado devido a corrupção: {self.file_path}")
+        except Exception as e:
+            self.logger.error(f"Erro ao recriar arquivo: {e}")
 
     def save(self):
         """Salva os dados atuais no arquivo JSON do usuário."""

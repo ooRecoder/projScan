@@ -26,7 +26,27 @@ class ConfigManager:
         self.config: Dict[str, Any] = {}
         
         self.logger.info(f"ConfigManager inicializado - Arquivo: {self.config_file}")
+        self.ensure_config_file_exists()  # Garante que o arquivo existe
         self.load()
+    
+    def ensure_config_file_exists(self):
+        """Garante que o arquivo de configuração existe, criando-o se necessário"""
+        try:
+            # Cria o diretório se não existir
+            os.makedirs(os.path.dirname(self.config_file), exist_ok=True)
+            
+            # Se o arquivo não existe, cria com configuração vazia
+            if not os.path.exists(self.config_file):
+                with open(self.config_file, "w", encoding="utf-8") as f:
+                    json.dump({}, f, indent=4, ensure_ascii=False)
+                self.logger.info(f"Arquivo de configuração criado: {self.config_file}")
+                
+        except PermissionError:
+            self.logger.error(f"Sem permissão para criar arquivo: {self.config_file}")
+            raise
+        except Exception as e:
+            self.logger.error(f"Erro ao criar arquivo de configuração: {e}")
+            raise
     
     def load(self):
         """Carrega a configuração do arquivo JSON"""
