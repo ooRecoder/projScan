@@ -33,7 +33,6 @@ class Scanner:
             # Tenta importar e inicializar o GitHubUploader
             from utils import GitHubUploader
             self.github_uploader = GitHubUploader.instance
-            self.logger.info("GitHubUploader inicializado com sucesso")
         except ImportError as e:
             self.logger.warning(f"GitHubUploader não disponível: {e}")
         except ValueError as e:

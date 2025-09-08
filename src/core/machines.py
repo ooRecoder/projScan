@@ -23,7 +23,7 @@ class ComputerManager:
             raise RuntimeError("Instância de FilePathManager ou Logging não inicializada")
         
         self.file_path = fm.get_file_path(file_path)
-        self.logger = instance_logger
+        self.logger = instance_logger.get_logger(__name__)
         self.computers: Dict[str, Dict[str, Any]] = {}
         self.logger.info(f"ComputerManager inicializado - Arquivo: {self.file_path}")
         self.load()
