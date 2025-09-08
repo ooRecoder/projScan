@@ -18,9 +18,34 @@ class ServiceManager:
             raise RuntimeError("❌ Instância de FilePathManager não existe")
         
         self.json_file_path = self.file_manager.get_file_path(json_file_path)
-        self.logger.info(f"Inicializando ServiceManager com arquivo: {json_file_path}")
+        self.logger.info(f"Inicializando ServiceManager com arquivo: {self.json_file_path}")
+        
+        # Garante que o arquivo existe antes de carregar
+        self._ensure_file_exists()
         self.services_data: Dict[str, Dict[str, Any]] = self._load_services()
         self.logger.info(f"ServiceManager Inicializado")
+    
+    def _ensure_file_exists(self):
+        """Garante que o arquivo de serviços existe, criando-o se necessário"""
+        try:
+            # Cria o diretório se não existir
+            os.makedirs(os.path.dirname(self.json_file_path), exist_ok=True)
+            
+            # Se o arquivo não existe, cria com serviços padrão
+            if not os.path.exists(self.json_file_path):
+                self.logger.warning(f"Arquivo JSON não encontrado: {self.json_file_path}")
+                default_services = self._get_default_services()
+                with open(self.json_file_path, 'w', encoding='utf-8') as file:
+                    json.dump(default_services, file, indent=2, ensure_ascii=False)
+                self.logger.info(f"Arquivo de serviços padrão criado: {self.json_file_path}")
+                
+        except PermissionError:
+            self.logger.error(f"Sem permissão para criar arquivo: {self.json_file_path}")
+            raise
+        except Exception as e:
+            self.logger.error(f"Erro ao criar arquivo de serviços: {e}")
+            raise
+
     def _load_services(self) -> Dict[str, Dict[str, Any]]:
         """Carrega os dados dos serviços do arquivo JSON"""
         try:
@@ -31,39 +56,132 @@ class ServiceManager:
                         self.logger.debug(f"Serviços carregados: {len(data)} serviços encontrados")
                         return data
             
-            # Se o arquivo não existe, cria um padrão
-            self.logger.warning(f"Arquivo JSON não encontrado: {self.json_file_path}")
-            return self._create_default_services()
+            # Se chegou aqui, o arquivo não existe ou está vazio
+            self.logger.warning("Arquivo JSON não encontrado ou vazio, usando serviços padrão")
+            return self._get_default_services()
                     
         except json.JSONDecodeError as e:
             self.logger.error(f"Erro de decodificação JSON: {e}")
-            return self._create_default_services()
+            # Recria o arquivo se estiver corrompido
+            return self._recreate_services_file()
         except Exception as e:
             self.logger.error(f"Erro inesperado ao carregar JSON: {e}")
-            return self._create_default_services()
+            return self._get_default_services()
     
-    def _create_default_services(self) -> Dict[str, Dict[str, Any]]:
-        """Cria uma estrutura padrão de serviços"""
+    def _recreate_services_file(self) -> Dict[str, Dict[str, Any]]:
+        """Recria o arquivo de serviços com a estrutura padrão"""
+        try:
+            default_services = self._get_default_services()
+            with open(self.json_file_path, 'w', encoding='utf-8') as file:
+                json.dump(default_services, file, indent=2, ensure_ascii=False)
+            self.logger.info(f"Arquivo de serviços recriado: {self.json_file_path}")
+            return default_services
+        except Exception as e:
+            self.logger.error(f"Erro ao recriar arquivo de serviços: {e}")
+            return self._get_default_services()
+    
+    def _get_default_services(self) -> Dict[str, Dict[str, Any]]:
+        """Retorna a estrutura padrão de serviços"""
         default_services = {
             "CPU": {
-                "description": "Monitoramento de CPU",
+                "description": "Coleta informações sobre a CPU do sistema",
                 "options": {
-                    "show_usage": {"default": True, "type": "bool", "description": "Mostrar uso da CPU"},
-                    "show_temperature": {"default": False, "type": "bool", "description": "Mostrar temperatura"}
+                    "usage": {
+                        "type": "boolean",
+                        "default": False,
+                        "description": "Incluir o uso da CPU em porcentagem"
+                    },
+                    "cores": {
+                        "type": "boolean",
+                        "default": True,
+                        "description": "Incluir o número de núcleos da CPU"
+                    },
+                    "details": {
+                        "type": "boolean",
+                        "default": True,
+                        "description": "Incluir detalhes do processador (nome/modelo)"
+                    }
                 }
             },
-            "MEMORY": {
-                "description": "Monitoramento de Memória",
+            "DEVICE": {
+                "description": "Coleta informações detalhadas do sistema Windows, incluindo fabricante, modelo, tipo de equipamento e baterias.",
                 "options": {
-                    "show_usage": {"default": True, "type": "bool", "description": "Mostrar uso de memória"},
-                    "show_swap": {"default": False, "type": "bool", "description": "Mostrar swap"}
+                    "include_system": {
+                        "type": "boolean",
+                        "default": True,
+                        "description": "Incluir informações do sistema, como fabricante, modelo, tipo de PC e usuário logado."
+                    },
+                    "include_battery": {
+                        "type": "boolean",
+                        "default": True,
+                        "description": "Incluir informações sobre a(s) bateria(s) do dispositivo, se houver."
+                    }
+                }
+            },
+            "BIOS": {
+                "description": "Serviço responsável por coletar informações da BIOS no Windows usando WMI."
+            },
+            "DISK": {
+                "description": "Coleta informações sobre os discos do sistema, incluindo modelo, uso, estatísticas de I/O e saúde.",
+                "options": {
+                    "disk_model": {
+                        "type": "boolean",
+                        "default": True,
+                        "description": "Incluir modelo e status do disco."
+                    },
+                    "details": {
+                        "type": "boolean",
+                        "default": True,
+                        "description": "Incluir detalhes completos do disco (WMI)."
+                    },
+                    "io_stats": {
+                        "type": "boolean",
+                        "default": False,
+                        "description": "Incluir estatísticas de I/O de cada disco."
+                    },
+                    "usage": {
+                        "type": "boolean",
+                        "default": True,
+                        "description": "Incluir uso de disco (total, usado, livre e percentual)."
+                    }
+                }
+            },
+            "OS": {
+                "description": "Coleta informações sobre o sistema operacional, incluindo nome, versão e release.",
+                "options": {
+                    "system": {
+                        "type": "boolean",
+                        "default": True,
+                        "description": "Incluir o nome do sistema operacional (ex: Windows, Linux, macOS)."
+                    },
+                    "version": {
+                        "type": "boolean",
+                        "default": True,
+                        "description": "Incluir a versão do sistema operacional."
+                    },
+                    "release": {
+                        "type": "boolean",
+                        "default": True,
+                        "description": "Incluir o release do sistema operacional."
+                    }
+                }
+            },
+            "RAM": {
+                "description": "Coleta informações sobre a memória RAM do sistema.",
+                "options": {
+                    "unit": {
+                        "type": "string",
+                        "default": "GB",
+                        "options": ["MB", "GB", "TB"],
+                        "description": "Unidade da memória (MB, GB ou TB)."
+                    }
                 }
             }
         }
         
-        self.logger.info("Criando estrutura padrão de serviços")
+        self.logger.info("Usando estrutura padrão de serviços")
         return default_services
-    
+
     def save_services(self) -> None:
         """Salva os dados atualizados no arquivo JSON"""
         try:
@@ -137,6 +255,7 @@ class ServiceManager:
         
         self.services_data[service_name.upper()] = service_data
         self.logger.info(f"Serviço adicionado: {service_name}")
+        self.save_services()
         return True
     
     def remove_service(self, service_name: str) -> bool:
@@ -144,6 +263,7 @@ class ServiceManager:
         if service_name.upper() in self.services_data:
             del self.services_data[service_name.upper()]
             self.logger.info(f"Serviço removido: {service_name}")
+            self.save_services()
             return True
         return False
     
@@ -203,9 +323,11 @@ class ServiceManager:
         
         service['options'][option_name]['default'] = value
         self.logger.debug(f"Opção atualizada: {service_name}.{option_name} = {value}")
+        self.save_services()
         return True
     
     def reload_services(self) -> None:
         """Recarrega os serviços do arquivo JSON"""
         self.logger.info("Recarregando serviços do arquivo JSON")
         self.services_data = self._load_services()
+        
