@@ -1,6 +1,6 @@
 from app import App
 from utils import LockApp, GitHubUploader, FilePathManager
-from core import AppLogger, AppConfig, ServiceManager, ComputerManager, ConfigManager
+from core import AppLogger, AppConfig, ServiceManager, ComputerManager, ConfigManager, Scanner
 from gui.components import show_custom_message
 
 def main():
@@ -19,7 +19,7 @@ def main():
     ServiceManager() # Carrega as configurações gerais dos serviços
     ConfigManager() # Carrega as configurações do usuário para os serviços
     ComputerManager() # Carrega os dados das máquinas scanneadas
-    
+    Scanner() # Carrega o executor dos serviços
     
     app = App()
     
