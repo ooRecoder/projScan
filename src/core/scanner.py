@@ -11,12 +11,14 @@ from datetime import datetime
 class Scanner:
     def __init__(self):
         instance_logger = AppLogger.instance
-        instance_cm = ComputerManager.instance
+        instance_configm = ConfigManager.instance
+        instance_compm = ComputerManager.instance
         
-        if not instance_cm or not instance_logger:
-            raise ImportError("Logging ou ComputerManager não foi inicializado")
+        if not instance_configm or not instance_logger or not instance_compm:
+            raise ImportError("Logging ou ConfigManager ou ComputerManager não foi inicializado")
         
-        self.config_manager = instance_cm
+        self.config_manager = instance_configm
+        self.computer_manager = instance_compm
         self.logger = instance_logger.get_logger(__name__)
         
         # Inicializa GitHubUploader se configurado
@@ -146,7 +148,7 @@ class Scanner:
                     }
                     
                     # Salvar no ComputerManager
-                    self.config_manager.add_computer(identifier, {
+                    self.computer_manager.add_computer(identifier, {
                         service_name: computer_data_with_meta
                     })
             
