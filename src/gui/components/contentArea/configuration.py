@@ -1,3 +1,7 @@
 from PySide6.QtWidgets import QScrollArea
 class ServiceContentArea(QScrollArea):
-    pass
+    def __init__(self):
+        super().__init__()
+        pass
+    def show_service(self):
+        return
